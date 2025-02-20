@@ -1,10 +1,13 @@
-
-
 # AlphaCodium
 
-This project implements a streamlined code generation system inspired by the AlphaCodium Paper. While the original paper likely utilizes a sandbox environment for code testing, this implementation includes a simplified validation approach using pseudocode to demonstrate the core concepts.
+This project implements a streamlined code generation system inspired by the AlphaCodium Paper. While the original paper likely utilizes a sandbox environment for code testing, this implementation includes a simplified validation step using pseudocode to demonstrate the core concepts.
+
+This image shows the high level flow of the code generation system.
 
 ![AlphaCodium Graph](./AlphaCodium/graphs/graph.png)
+
+## My preferred way to run the code
+Use the Quoakka.js extension + console ninja extension to run and inspect the code.
 
 ## Install dependencies:
 

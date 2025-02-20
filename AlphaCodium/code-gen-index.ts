@@ -4,6 +4,7 @@ import { model } from "./model/model";
 import { codeGenSchema, testCaseSchema } from "./schemas/code-gen-schema";
 import { rankSchema } from "./schemas/rank-schema";
 import { visualizeGraph } from "./utils/graph-visualizer";
+import dedent from "dedent";
 
 const GraphState = Annotation.Root({
   messages: Annotation<BaseMessage[]>({
@@ -68,17 +69,32 @@ const GraphState = Annotation.Root({
 const generateCode = async (state: typeof GraphState.State) => {
   const { userQuery } = state;
 
-  const prompt = `
-    You are a code generator. You are given a query and you need to generate 2 different solutions for the query.
-    For each solution:
-    1. Write the rationale for the approach
-    2. Provide the implementation
-    3. Make sure each solution takes a different approach to solve the problem
+  const prompt = dedent`You are a TypeScript code generator focused on writing clean, efficient, and type-safe code.
 
-    Generate at least 2 different solutions.
-    The query is: ${userQuery}
-    The code should be written in typescript.
-    `;
+Task: Generate 2 distinct solutions for the following query: "${userQuery}"
+
+For each solution, provide:
+1. APPROACH: Explain the rationale, including:
+   - Why this approach is suitable
+   - Time/space complexity analysis
+   - Any trade-offs or considerations
+
+2. IMPLEMENTATION:
+   - Write production-ready TypeScript code
+   - Include proper type annotations
+   - Follow TypeScript best practices
+   - Avoid type assertions
+   - Include error handling where appropriate
+   - Add minimal but essential comments
+
+3. DIFFERENCES:
+   Each solution must differ in at least one significant aspect, such as:
+   - Algorithm approach
+   - Data structures used
+   - Time/space complexity trade-offs
+   - Implementation style (functional vs imperative)
+
+Format each solution as a complete, self-contained function that can be directly used.`;
 
   const result = await model
     .withStructuredOutput(codeGenSchema)
@@ -105,7 +121,7 @@ const generateCode = async (state: typeof GraphState.State) => {
 const generateTestCases = async (state: typeof GraphState.State) => {
   const { userQuery } = state;
 
-  const prompt = `
+  const prompt = dedent`
     You are a test case generator. You are given a query and you need to generate 2 different test cases for the query.
     Make sure to not include any comments or /n in the test cases.
     For each test case:
@@ -182,7 +198,7 @@ const validateCode = async (state: typeof GraphState.State) => {
 
   const isValid = true;
 
-  // SUDO CODE
+  // PSEUDO CODE
   // 1. Run the test cases
   // 2. If the test cases pass, return the code
   // 3. If the test cases fail, return the reason and the code that failed to the generate_code node
@@ -230,7 +246,8 @@ async function main() {
     generation: null,
   });
 
-  console.log(result);
+  console.log("Code generation complete :", result.bestSolution);
+  console.log("Full result: ", result);
   visualizeGraph(compiledGraph);
   console.log("Graph saved as graph.png");
 }
